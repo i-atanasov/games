@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bricks</title>
+    <style>
+    	* { 
+        padding: 0;
+        margin: 0;
+    }
+
+    canvas { 
+        background: #eee; 
+        display: block; 
+        margin: 0 auto;
+    }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    var x = canvas.width/2;
+    var y = canvas.height-30;
+    var m = 1;
+    var ballRadius = 10;
+
+    function motionBall() {
+        ctx.beginPath();
+        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+        
+    }
+
+    function motion() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        motionBall();
+        x -= m;
+        y -= m;
+        
+    }
+
+    setInterval(motion, 4);
+
+    
+
+</script>
+
+</body>
+</html>
