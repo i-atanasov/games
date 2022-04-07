@@ -1,54 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    
     <title>Bricks</title>
     <style>
     	* { 
-        padding: 0;
-        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: lightgoldenrodyellow;
     }
 
     canvas { 
-        background: #eee; 
+        background: lightgray;
+        border-radius: 10px;
+        border-style: groove;
+        border-color: darkolivegreen;
         display: block; 
         margin: 0 auto;
     }
+
+    h3 {
+        margin: 30px 20px 0px 30px;
+        color: darkslategray;
+    }
+
     </style>
 </head>
 
 <body>
+    <div><h3>Bricks Game</h3></div>
 
-    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+    <div id="mainField" >
+
+        <canvas id="myCanvas" style="float:left; margin: 50px;" width="700" height="400"></canvas>
+
+        <h2>How To Play:</h2>
+        <p>
+          Use your right and left keys to move the paddle to bounce the ball up
+          and break the blocks.
+        </p>
 
 <script>
     var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
-    var x = canvas.width/2;
-    var y = canvas.height-30;
-    var m = 1;
-    var ballRadius = 10;
+    
+    const ball = { 
+        x: canvas.width/2, //center
+        y: canvas.height - 20, //px from the bottom
+        dx: 1,
+        dy: -1,
+        radius: 5,
+        speed: 5
+    }
+    
+    const paddle = {
+        height: 10,
+        width: 50,
+        pos: (canvas.width - this.width) / 2
+    }
 
-    function motionBall() {
+    function drawBall() {
         ctx.beginPath();
-        ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
+        ctx.fillStyle = "#555";
         ctx.fill();
+        ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+        ctx.stroke();
         ctx.closePath();
-        
     }
 
     function motion() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        motionBall();
-        x -= m;
-        y -= m;
+        drawBall();
+
+        //Wall detection
+        if(ball.x + ball.dx > canvas.width-ball.radius || ball.x + ball.dx < ball.radius) {
+            ball.dx *= -1;
+        }
+        if(ball.y + ball.dy > canvas.height-ball.radius || ball.y + ball.dy < ball.radius) {
+            ball.dy *= -1;
+        }
+        
+        ball.x += ball.dx;
+        ball.y += ball.dy;
         
     }
 
-    setInterval(motion, 4);
-
-    
+    setInterval(motion, ball.speed);
 
 </script>
 
