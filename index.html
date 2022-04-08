@@ -64,10 +64,11 @@
     
     const paddle = {
         height: 20,
-        width: 100,
-        get pos() {
-            return (canvas.width-this.width)/2;
-        }
+        width: 75,
+        pos: (canvas.width - 75) / 2
+        // get pos() {
+        //     return (canvas.width-this.width)/2;
+        // }
     }
 
 
@@ -75,20 +76,20 @@
     document.addEventListener("keyup", keyUpHandler, false);
 
     //Right for IE/Edge
-    function keyDownHandler(pressed) {
-        if(pressed.key == "Right" || pressed.key == "ArrowRight") {
+    function keyDownHandler(e) {
+        if (e.keyCode == "39") {
             buttonRight = true;
         }
-        else if(pressed.key == "Left" || pressed.key == "ArrowLeft") {
+        else if (e.keyCode == "37") {
             buttonLeft = true;
         }
     }
 
-    function keyUpHandler(pressed) {
-        if(pressed.key == "Right" || pressed.key == "ArrowRight") {
+    function keyUpHandler(e) {
+        if (e.keyCode == "39") {
             buttonRight = false;
         }
-        else if(pressed.key == "Left" || pressed.key == "ArrowLeft") {
+        else if (e.keyCode == "37") {
             buttonLeft = false;
         }
     }
@@ -128,12 +129,12 @@
 
         //Paddle wall detection
         if(buttonRight) {
-            paddle.pos += 10;
+            paddle.pos += 5;
             if (paddle.pos + paddle.width > canvas.width) {
                 paddle.pos = canvas.width - paddle.width;
             }
         } else if (buttonLeft) {
-            paddle.pos -= 10;
+            paddle.pos -= 5;
             if (paddle.pos < 0) {
                 paddle.pos = 0;
             }
