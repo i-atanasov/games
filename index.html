@@ -39,12 +39,15 @@
 
     <div id="mainField" >
 
-        <canvas id="myCanvas" style="float:left; margin: 50px;" width="700" height="400"></canvas>
+        <canvas id="myCanvas" style="float:left; margin:50px;" width="700" height="400"></canvas>
 
         <h2>How To Play:</h2>
         <p>
           Use your right and left keys to move the paddle to bounce the ball up
           and break the blocks.
+        </p>
+        <p id="positions">
+
         </p>
 
 <script>
@@ -52,10 +55,12 @@
     var ctx = canvas.getContext("2d");
     var buttonRight = false;
     var buttonLeft = false;
+    var position = document.getElementById("positions");
+    var score = 0;
     
     const ball = { 
         x: canvas.width/2, //center
-        y: canvas.height - 20, //px from the bottom
+        y: canvas.height - 35, //px from the bottom
         dx: 1,
         dy: -1,
         radius: 5,
@@ -70,6 +75,24 @@
         // get pos() {
         //     return (canvas.width-this.width)/2;
         // }
+    }
+
+    const brick = {
+        rows: 3,
+        cols: 5,
+        width: 75,
+        height: 15,
+        padding: 10,
+    }
+
+    //bricks objects array
+    var bricks = []
+
+    for (var i=1; i<=brick.cols; i++) {
+        bricks[i] = [];
+        for (var j=1; j<=brick.rows; j++) {
+            bricks[i][j] = {x: 0, y: 0, hit: false};
+        }
     }
 
     // Event handlers for the paddle
@@ -95,11 +118,29 @@
         }
     }
 
+    function hitBricks() {
+    for (var i=1; i<=brick.cols; i++) {
+        for (var j=1; j<=brick.rows; j++) {
+            var currentBrick = bricks[i][j];
+            if (currentBrick.hit == false) {
+                if(ball.x + 5 > currentBrick.x && ball.x + 5 < currentBrick.x + brick.width && ball.y + 5 > currentBrick.y && ball.y + 5 < currentBrick.y + brick.height) {
+                    ball.dy = -ball.dy;
+                    currentBrick.hit = true;
+                    score++;
+                    if (score == brick.cols * brick.rows) {
+                        alert(`You win! Score: ${score}.`)
+                    }
+                }
+            }
+        }
+    }
+}
+
     // Paddle and ball draw
     function drawPaddle() {
         ctx.beginPath();
         ctx.rect(paddle.pos, canvas.height-paddle.height-10, paddle.width, paddle.height);
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "green";
         ctx.fill();
         ctx.strokeStyle = "rgba(0, 0, 0, 1)";
         ctx.stroke();
@@ -117,27 +158,59 @@
         ctx.closePath();
     }
 
+    function drawBricks() {
+        for (var i=1; i<=brick.cols; i++) {
+            for (var j=1; j<=brick.rows; j++) {
+                if (bricks[i][j].hit == false) {
+                    var brickX = (i*(brick.width + 20)) + 30;
+                    var brickY = (j*(brick.height + 20)) + 30;
+                    bricks[i][j].x = brickX;
+                    bricks[i][j].y = brickY;
+                    ctx.beginPath();
+                    ctx.rect(brickX, brickY, brick.width, brick.height);
+                    ctx.fillStyle = "red";
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+        }
+    }
+
     function motion() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBall();
         drawPaddle();
+        drawBricks();
+        hitBricks();
+
+        position.innerHTML = "score: " + score;
 
         //Wall detection + direction change
         if(ball.x + ball.dx > canvas.width-ball.radius || ball.x + ball.dx < ball.radius) {
             ball.dx *= -1;
         }
-        if(ball.y + ball.dy > canvas.height-ball.radius || ball.y + ball.dy < ball.radius) {
+    
+        if (ball.y + ball.dy < ball.radius) {
             ball.dy *= -1;
+        //hitting the bottom
+        } else if (ball.y + ball.dy > canvas.height - ball.radius - 20) {
+            if (ball.x > paddle.pos && ball.x < paddle.pos + paddle.width) {
+                ball.dy *= -1;
+            } else {
+                alert('game over');
+                document.location.reload();
+                clearInterval(interval);
+            }
         }
-
+    
         //paddle motion + wall detection
         if(buttonRight) {
-            paddle.pos += 5;
+            paddle.pos += 4;
             if (paddle.pos + paddle.width > canvas.width) {
                 paddle.pos = canvas.width - paddle.width;
             }
         } else if (buttonLeft) {
-            paddle.pos -= 5;
+            paddle.pos -= 4;
             if (paddle.pos < 0) {
                 paddle.pos = 0;
             }
@@ -149,9 +222,8 @@
         
     }
 
-
     
-    setInterval(motion, ball.speed);
+var interval = setInterval(motion, ball.speed);
 
     
 
