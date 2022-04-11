@@ -62,20 +62,21 @@
         speed: 5
     }
     
+    //this.width reference not working, when fixed by get method the paddle motion function doesn't work?
     const paddle = {
-        height: 20,
-        width: 75,
+        height: 15,
+        width: 90,
         pos: (canvas.width - 75) / 2
         // get pos() {
         //     return (canvas.width-this.width)/2;
         // }
     }
 
-
+    // Event handlers for the paddle
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
 
-    //Right for IE/Edge
+    // Pushed key detection
     function keyDownHandler(e) {
         if (e.keyCode == "39") {
             buttonRight = true;
@@ -94,12 +95,14 @@
         }
     }
 
-
+    // Paddle and ball draw
     function drawPaddle() {
         ctx.beginPath();
-        ctx.rect(paddle.pos, canvas.height-paddle.height, paddle.width, paddle.height);
+        ctx.rect(paddle.pos, canvas.height-paddle.height-10, paddle.width, paddle.height);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
+        ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+        ctx.stroke();
         ctx.closePath();
 
     }
@@ -119,7 +122,7 @@
         drawBall();
         drawPaddle();
 
-        //Wall detection
+        //Wall detection + direction change
         if(ball.x + ball.dx > canvas.width-ball.radius || ball.x + ball.dx < ball.radius) {
             ball.dx *= -1;
         }
@@ -127,7 +130,7 @@
             ball.dy *= -1;
         }
 
-        //Paddle wall detection
+        //paddle motion + wall detection
         if(buttonRight) {
             paddle.pos += 5;
             if (paddle.pos + paddle.width > canvas.width) {
@@ -140,7 +143,7 @@
             }
         }
 
-        
+        //ball motion
         ball.x += ball.dx;
         ball.y += ball.dy;
         
@@ -148,7 +151,6 @@
 
 
     
-
     setInterval(motion, ball.speed);
 
     
